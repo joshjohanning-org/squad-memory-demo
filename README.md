@@ -34,75 +34,203 @@ copilot --agent squad
 
 The repository includes `.mcp.json`, which starts Squad's local state MCP server through `npx`. Review the configuration before approving it.
 
-## Suggested 10-minute demo
+## End-to-end demo
 
-### 1. Ask the team to analyze the whole system
-
-```text
-Team, analyze the complete AtlasFX application. Produce an evidence-backed current-state architecture and modernization risk assessment. Cite every source file you relied on and have the reviewer challenge any unsupported claim.
-```
-
-This should fan work out across the lead, reviewer, security, docs, and developer-experience roles.
-
-### 2. Establish a durable directive
+This walkthrough demonstrates the full flow:
 
 ```text
-Always distinguish verified facts from hypotheses. Never claim whole-codebase coverage without listing every analyzed source file.
+multi-agent analysis
+  -> long working conversation
+  -> candidate memory extraction
+  -> evidence and reviewer gate
+  -> Scribe persistence
+  -> file inspection
+  -> new session recall
 ```
 
-Squad should persist the directive through its decisions workflow so agents can use it in later sessions.
+### Step 1: Start Squad
 
-### 3. Ask for a migration slice
-
-```text
-Design the first migration slice for trade capture. Preserve the existing validation and audit behavior, but separate the desktop UI, business logic, and persistence concerns. Do not write code yet.
-```
-
-### 4. End the session and start a new one
-
-Exit Copilot, then run:
+From the repository root:
 
 ```bash
 copilot --agent squad
 ```
 
-Ask:
+Keep this Copilot session open through step 5.
+
+### Step 2: Analyze the fictional application
+
+Paste this into Copilot:
 
 ```text
-What does the team remember about AtlasFX, what decisions did we make, and what evidence standard must future modernization recommendations follow?
+Team, analyze the complete AtlasFX application.
+
+Produce an evidence-backed current-state architecture and modernization risk assessment. Enumerate every Java source file before making whole-codebase claims. Cite every source file you rely on and have the reviewer challenge unsupported conclusions.
 ```
 
-Then inspect the changed files:
+Expected behavior:
+
+- The coordinator routes work to relevant specialist personas.
+- The lead reconstructs the architecture and execution flow.
+- The reviewer compares coverage claims with the actual source inventory.
+- Security examines trust boundaries and audit behavior.
+- Docs organizes the findings.
+- Scribe records the work after the agent batch completes.
+
+The important result is a verified source-code analysis, not memory recall yet.
+
+### Step 3: Add decisions, a hypothesis, and a follow-up
+
+Continue in the same Copilot session:
+
+```text
+For the modernization plan, preserve the existing trade validation and audit behavior. Prefer an incremental migration over a big-bang rewrite.
+
+We are considering a REST API between the future web client and application service, but that is only a hypothesis. We have not selected the API style yet.
+
+The next action is to identify characterization tests for the trade submission path.
+```
+
+This deliberately introduces different types of information:
+
+| Information | Intended classification |
+|-------------|-------------------------|
+| Preserve validation and auditing | Project decision |
+| Prefer incremental migration | Project decision |
+| Consider a REST API | Hypothesis, not a decision |
+| Identify characterization tests | Open follow-up |
+
+### Step 4: Extract candidate memory
+
+Ask Squad to run the distillation process without writing anything yet:
+
+```text
+Run the conversation-distillation skill on everything discussed in this session.
+
+Extract only information that should affect future work. Classify each candidate as a fact, decision, directive, pattern, anti-pattern, or follow-up.
+
+For each candidate, include:
+- The standalone statement
+- Its evidence
+- Whether it is verified, user-directed, a hypothesis, or still open
+- The proposed memory destination
+
+Have the reviewer mark each candidate as accept, revise, or drop.
+
+Do not persist anything yet. Show me the candidate table first.
+```
+
+Expected output should resemble:
+
+| Type | Statement | Status | Destination | Verdict |
+|------|-----------|--------|-------------|---------|
+| Fact | Trade submission includes validation, persistence, and auditing | Verified from source | Agent history | Accept |
+| Decision | Preserve validation and audit behavior | User-directed | `decisions.md` | Accept |
+| Decision | Use incremental migration | User-directed | `decisions.md` | Accept |
+| Hypothesis | Introduce a REST API | Unconfirmed | Session log | Accept as hypothesis |
+| Pattern | Characterize behavior before extraction | Reusable | `wisdom.md` | Accept |
+| Follow-up | Identify characterization tests | Open | Session log and task tracker | Accept |
+
+The exact wording may differ. The key behavior is that the REST idea remains a hypothesis instead of silently becoming an architecture decision.
+
+### Step 5: Approve and persist the accepted entries
+
+After reviewing the candidate table, paste:
+
+```text
+Persist the accepted and revised entries.
+
+Use the proposed destinations:
+- Project decisions and directives go to shared decisions
+- Specialist knowledge goes to the appropriate agent history
+- Reusable modernization patterns go to team wisdom
+- Repeatable procedures go to skills
+- Hypotheses and open follow-ups stay clearly marked
+
+Ask Scribe to perform the writes and verify each destination by reading it back. Then tell me exactly which files or memory records changed.
+```
+
+Expected behavior:
+
+- Scribe writes shared decisions to `.squad/decisions.md`.
+- Project-specific findings may go to an agent's `history.md`.
+- Reusable patterns may go to `.squad/identity/wisdom.md`.
+- The REST API idea remains explicitly unconfirmed.
+- Scribe reads the destinations back to confirm persistence.
+
+### Step 6: Inspect the memory
+
+In another terminal, or after leaving Copilot, run:
 
 ```bash
 git status --short
-git diff
+git diff -- .squad/decisions.md
+git diff -- .squad/identity/wisdom.md
+git diff -- .squad/agents
+git diff -- .github/skills
 ```
 
-The useful part of the demo is that the memory is visible, reviewable, and versionable rather than hidden in a conversation.
-
-### 5. Distill a long conversation
-
-The demo includes an automatic **Knowledge Distillation** ceremony and a `conversation-distillation` skill. After substantial work, the docs agent acts as the curator, the reviewer challenges unsupported candidates, and Scribe persists the accepted entries.
-
-You can also trigger it directly:
+You can also ask Squad:
 
 ```text
-Run conversation distillation on this session. Show me the candidate memory entries and reviewer verdicts before Scribe persists them.
+Show me exactly what was persisted from this session and where each item was stored.
 ```
 
-The intended pipeline is:
+Session and orchestration logs may not appear in `git diff` because the demo ignores runtime log directories.
+
+### Step 7: End the first session
+
+Inside Copilot CLI:
 
 ```text
-conversation
-  -> candidate facts, decisions, patterns, and follow-ups
-  -> evidence and conflict review
-  -> destination classification
-  -> Scribe persistence
-  -> read-back verification
+/exit
 ```
 
-This is intentionally selective. Repeated discussion, abandoned brainstorming, and raw transcript text should not become durable memory.
+Leave the generated memory changes uncommitted. This makes them easy to inspect during the demo.
+
+### Step 8: Start a new session
+
+From the same repository:
+
+```bash
+copilot --agent squad
+```
+
+Do not explain AtlasFX again. Ask only:
+
+```text
+Without repeating the previous analysis, tell me:
+
+1. What is verified about the current AtlasFX trade submission flow?
+2. What modernization decisions did we make?
+3. What architecture ideas remain hypotheses?
+4. What reusable modernization lesson did the team retain?
+5. What follow-up remains open?
+
+For every answer, identify the Squad memory source you used.
+```
+
+A successful result distinguishes:
+
+- **Verified fact:** validation, persistence, and audit are part of submission.
+- **Decision:** preserve those behaviors and migrate incrementally.
+- **Hypothesis:** a REST API is being considered but has not been selected.
+- **Wisdom:** characterize existing behavior before extracting components.
+- **Follow-up:** identify characterization tests.
+
+### Step 9: Show the result
+
+Run:
+
+```bash
+git diff -- .squad .github/skills
+```
+
+The demonstration story is:
+
+> We had a long working conversation containing facts, decisions, ideas, and follow-ups. Squad distilled it, reviewed the candidate knowledge, stored each accepted item in the appropriate memory layer, and a new session recovered the important context without replaying the transcript.
+
+If Squad does not automatically select the distillation skill, use the complete prompt from step 4. The prompt contains the full procedure and does not depend on automatic skill selection.
 
 ## How Squad's memory is structured
 
