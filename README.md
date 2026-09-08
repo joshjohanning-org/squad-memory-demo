@@ -81,6 +81,29 @@ git diff
 
 The useful part of the demo is that the memory is visible, reviewable, and versionable rather than hidden in a conversation.
 
+### 5. Distill a long conversation
+
+The demo includes an automatic **Knowledge Distillation** ceremony and a `conversation-distillation` skill. After substantial work, the docs agent acts as the curator, the reviewer challenges unsupported candidates, and Scribe persists the accepted entries.
+
+You can also trigger it directly:
+
+```text
+Run conversation distillation on this session. Show me the candidate memory entries and reviewer verdicts before Scribe persists them.
+```
+
+The intended pipeline is:
+
+```text
+conversation
+  -> candidate facts, decisions, patterns, and follow-ups
+  -> evidence and conflict review
+  -> destination classification
+  -> Scribe persistence
+  -> read-back verification
+```
+
+This is intentionally selective. Repeated discussion, abandoned brainstorming, and raw transcript text should not become durable memory.
+
 ## How Squad's memory is structured
 
 | Layer | Location | Purpose |
@@ -100,6 +123,8 @@ The files serve different purposes:
 - **History** answers, "What has this specialist learned?"
 - **Wisdom** answers, "What reusable lesson should the whole team retain?"
 - **Skills** answer, "How should the team repeat this kind of work?"
+
+The `conversation-distillation` skill provides a concrete extraction schema and placement rules for turning a long session into these layers.
 
 Squad's documentation describes progressive summarization for growing history and decision files. Skills and wisdom are intended for durable knowledge. See [Memory and Knowledge](https://bradygaster.github.io/squad/docs/concepts/memory-and-knowledge/).
 

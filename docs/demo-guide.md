@@ -52,6 +52,12 @@ Have the reviewer challenge the architecture report. Reject any statement that d
 What did we learn that should become team wisdom, and what is specific to AtlasFX and belongs only in decisions or agent history?
 ```
 
+### Conversation distillation
+
+```text
+Run conversation distillation on this session. Show the candidate facts, decisions, directives, patterns, anti-patterns, and follow-ups. Have the reviewer reject unsupported entries, then ask Scribe to persist accepted entries in the correct memory layer.
+```
+
 ### New session recall
 
 ```text

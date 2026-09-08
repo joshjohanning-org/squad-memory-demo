@@ -40,6 +40,27 @@
 3. What should change?
 4. Action items for next iteration
 
+---
+
+## Knowledge Distillation
+
+| Field | Value |
+|-------|-------|
+| **Trigger** | auto |
+| **When** | after |
+| **Condition** | substantial multi-step work produced decisions, reusable patterns, project facts, or unresolved follow-ups |
+| **Facilitator** | docs |
+| **Participants** | lead, reviewer |
+| **Time budget** | focused |
+| **Enabled** | yes |
+
+**Agenda:**
+1. Extract only information that should affect future work
+2. Classify each candidate as fact, decision, directive, pattern, anti-pattern, or follow-up
+3. Cite the evidence and mark hypotheses explicitly
+4. Have the reviewer accept, revise, or drop each candidate
+5. Route accepted items to session log, decisions, agent history, wisdom, or a reusable skill
+6. Ask Scribe to persist the accepted entries and verify the writes
 
 ---
 
