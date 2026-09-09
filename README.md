@@ -42,35 +42,64 @@ The repository includes `.mcp.json`, which starts Squad's local state MCP server
 - Graphify models relationships in the repository.
 - Squad retains findings, decisions, hypotheses, and reusable guidance from the team's work.
 
-The repository includes Graphify's project-scoped GitHub Copilot CLI skill under `.copilot/skills/graphify/`. Install Graphify with `pipx`, then start Copilot:
+For this repository, use the two Graphify interfaces for different purposes:
+
+| Task | Interface |
+|------|-----------|
+| Generate or refresh the committed graph | Run the `graphify` shell commands directly |
+| Ask questions using the existing graph | Run `/graphify query ...` inside Copilot CLI |
+
+Do not use the Graphify skill to regenerate the shared graph for this demo. The direct shell commands below make the input and root output directory explicit, which keeps every contributor and the CI workflow consistent.
+
+The repository includes Graphify's project-scoped GitHub Copilot CLI skill under `.copilot/skills/graphify/`. Install the pinned Graphify version with `pipx`:
 
 ```bash
-pipx install graphifyy
+pipx install graphifyy==0.9.56
 pipx ensurepath
-copilot --agent squad
 ```
 
-Open a new terminal after running `pipx ensurepath` so the `graphify` command is available.
+| Command | What it does |
+|---------|--------------|
+| `pipx install graphifyy==0.9.56` | Installs Graphify in an isolated Python environment and pins the version used by the repository and CI workflow. The package is named `graphifyy`, but it provides the `graphify` command. |
+| `pipx ensurepath` | Adds the directory containing commands installed by `pipx` to your shell `PATH`. Run it once, then open a new terminal. |
 
-Inside Copilot CLI, run:
+### Generate or refresh the shared graph
 
-```text
-/graphify src/main/java
-```
-
-Graphify writes the generated graph, report, wiki, and cache to `graphify-out/`. The directory is ignored because the output can be regenerated from the repository. For this small demo, its main value is visualizing cross-file relationships rather than reducing context usage.
-
-To update an existing graph after the source changes:
-
-```text
-/graphify src/main/java --update
-```
-
-To run Graphify directly:
+Run these commands when creating the graph for the first time or updating it after the Java source changes:
 
 ```bash
 graphify extract src/main/java --code-only --out .
+graphify cluster-only . --no-label
 ```
+
+| Command | What it does |
+|---------|--------------|
+| `graphify extract src/main/java --code-only --out .` | Scans the AtlasFX Java source, uses deterministic AST parsing instead of an LLM, and writes the graph under the repository-root `graphify-out/` directory. |
+| `graphify cluster-only . --no-label` | Groups the generated nodes into related communities and regenerates `graph.json`, `graph.html`, and `GRAPH_REPORT.md`. `--no-label` avoids using an LLM to name the communities. |
+
+Graphify writes the shared graph to `graphify-out/`. Commit the generated `graph.json`, `graph.html`, and `GRAPH_REPORT.md` files so other developers and agents can use the same baseline.
+
+The `.github/workflows/verify-committed-graphify-graph-is-up-to-date.yml` file defines the explicitly named `Verify committed Graphify graph is up to date` workflow. It runs on pull requests that change the Java source or shared graph, regenerates the graph, and fails when the committed files are stale. Developers must regenerate and commit the graph with the source change before merging.
+
+### Query an existing graph
+
+Returning users and other developers do not need to regenerate a graph when `graphify-out/graph.json` is already present in the repository. Start Copilot:
+
+```bash
+copilot --agent squad
+```
+
+This starts GitHub Copilot CLI with the repository's Squad coordinator agent.
+
+Then query the committed graph:
+
+```text
+/graphify query "Trace the AtlasFX trade submission flow"
+```
+
+This invokes the repository's Graphify skill and queries the existing `graphify-out/graph.json`. It does not regenerate the graph or modify the source.
+
+For this small demo, Graphify's main value is visualizing cross-file relationships rather than reducing context usage.
 
 ## End-to-end demo
 
