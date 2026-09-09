@@ -15,6 +15,7 @@ The repository models **AtlasFX**, a fictional 25-year-old Java desktop applicat
 - Distilled team wisdom containing reusable patterns and anti-patterns.
 - Skills that encode repeatable workflows.
 - A small codebase whose cross-file relationships can be analyzed and verified.
+- Optional Graphify output for exploring the codebase as a knowledge graph.
 
 ## Quick start
 
@@ -33,6 +34,43 @@ copilot --agent squad
 ```
 
 The repository includes `.mcp.json`, which starts Squad's local state MCP server through `npx`. Review the configuration before approving it.
+
+## Optional: visualize the codebase with Graphify
+
+[Graphify](https://github.com/Graphify-Labs/graphify) can build an interactive knowledge graph from the fictional AtlasFX source and documentation. This is separate from Squad memory:
+
+- Graphify models relationships in the repository.
+- Squad retains findings, decisions, hypotheses, and reusable guidance from the team's work.
+
+The repository includes Graphify's project-scoped GitHub Copilot CLI skill under `.copilot/skills/graphify/`. Install Graphify with `pipx`, then start Copilot:
+
+```bash
+pipx install graphifyy
+pipx ensurepath
+copilot --agent squad
+```
+
+Open a new terminal after running `pipx ensurepath` so the `graphify` command is available.
+
+Inside Copilot CLI, run:
+
+```text
+/graphify src/main/java
+```
+
+Graphify writes the generated graph, report, wiki, and cache to `graphify-out/`. The directory is ignored because the output can be regenerated from the repository. For this small demo, its main value is visualizing cross-file relationships rather than reducing context usage.
+
+To update an existing graph after the source changes:
+
+```text
+/graphify src/main/java --update
+```
+
+To run Graphify directly:
+
+```bash
+graphify extract src/main/java --code-only --out .
+```
 
 ## End-to-end demo
 
@@ -307,5 +345,6 @@ squad upgrade --dry-run
 - [Installation](https://bradygaster.github.io/squad/docs/get-started/installation/)
 - [Memory and Knowledge](https://bradygaster.github.io/squad/docs/concepts/memory-and-knowledge/)
 - [GitHub Copilot agent skills](https://docs.github.com/en/enterprise-cloud@latest/copilot/concepts/agents/about-agent-skills)
+- [Graphify](https://github.com/Graphify-Labs/graphify)
 
 Squad is distributed under the MIT License. This demo is independently authored and is not an official Squad sample.
