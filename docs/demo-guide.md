@@ -4,6 +4,10 @@
 
 Show how a multi-agent team can preserve useful project context between sessions without treating a long chat transcript as the source of truth.
 
+The extended demo also shows how that memory supports a controlled migration:
+agents work from approved rules, stop at unresolved gaps, and prove behavior
+with a mechanical judge.
+
 ## Story
 
 AtlasFX is a fictional foreign-exchange trade capture system:
@@ -33,6 +37,35 @@ Useful questions:
 - Does a second session reuse the decision without being reminded?
 
 ## Prompts
+
+### Establish the migration baseline
+
+Run:
+
+```bash
+./scripts/validate-characterization.sh
+```
+
+Then ask Squad:
+
+```text
+Team, inspect PILOT-001 and determine whether the current characterization
+judge is sufficient to protect the trade-submission migration boundary.
+
+Use the migration charter. Have Reviewer identify missing observable behavior
+and distinguish required additions from speculative future requirements.
+```
+
+### Rehearse a disposable migration pilot
+
+```text
+Team, prepare PILOT-002 as a disposable stress test of the migration process.
+
+Do not choose an API style or transaction model that remains open in GAPS.md.
+Lead should identify the decisions required, Migrator should cite the rules it
+would apply, Reviewer should challenge the proposal independently, and Scribe
+should retain only approved decisions and reusable lessons.
+```
 
 ### Current-state analysis
 

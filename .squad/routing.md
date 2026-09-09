@@ -7,6 +7,7 @@ How to decide who handles what.
 | Work Type | Route To | Examples |
 |-----------|----------|----------|
 | Architecture recovery and migration sequencing | lead | Current-state maps, target architecture, migration slices |
+| Bounded migration implementation | migrator | Characterization fixtures, adapter extraction, approved transformations |
 | Evidence and coverage verification | reviewer | File inventory, unsupported claims, test gaps |
 | Developer workflow and adoption | devrel | CLI experience, onboarding, repeatable demos |
 | Threat modeling and data boundaries | security | Secrets, permissions, trust boundaries, audit requirements |
@@ -44,6 +45,8 @@ here only when their agent names also exist in the casting registry.
 | Work Type | Primary | Secondary |
 |-----------|---------|----------|
 | Whole-codebase modernization assessment | lead | reviewer |
+| Migration work item implementation | migrator | reviewer |
+| Migration rule or gap decision | lead | security |
 | Coverage or evidence challenge | reviewer | docs |
 | Developer onboarding and usability | devrel | docs |
 | Security and compliance analysis | security | reviewer |

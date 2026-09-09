@@ -13,6 +13,7 @@
 
 - Architecture records and evidence maps
 - Classification of findings as history, decisions, wisdom, or skills
+- Alignment among the migration rulebook, gap inventory, validation guide, and work queue
 - Removal or archiving of stale knowledge
 - Documentation that remains aligned with source code
 
@@ -20,6 +21,7 @@
 
 - Every doc answers: who is this for? what will they learn? what should they do next?
 - Keep docs close to code — update docs in the same PR as code changes
+- Require stable rule and gap IDs so agent handoffs remain auditable
 - Use consistent terminology — maintain a glossary if needed
 - Prefer examples over explanations
 

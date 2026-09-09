@@ -9,6 +9,9 @@
 # Squad: SubSquad activation file (local to this machine)
 .squad-workstream
 
+# Java build output
+target/
+
 # Graphify: commit only the shared root graph and human-readable outputs
 **/graphify-out/*
 !/graphify-out/graph.json

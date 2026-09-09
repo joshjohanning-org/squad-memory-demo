@@ -15,6 +15,7 @@ The repository models **AtlasFX**, a fictional 25-year-old Java desktop applicat
 - Distilled team wisdom containing reusable patterns and anti-patterns.
 - Skills that encode repeatable workflows.
 - A small codebase whose cross-file relationships can be analyzed and verified.
+- A rule-driven migration loop with a mechanical characterization judge.
 - Optional Graphify output for exploring the codebase as a knowledge graph.
 
 ## Quick start
@@ -23,6 +24,7 @@ Prerequisites:
 
 - Git
 - [GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/set-up/install-copilot-cli)
+- JDK 17 or later for the AtlasFX characterization judge
 - Node.js 22.5 or later when installing Squad through npm
 
 ```bash
@@ -34,6 +36,42 @@ copilot --agent squad
 ```
 
 The repository includes `.mcp.json`, which starts Squad's local state MCP server through `npx`. Review the configuration before approving it.
+
+## Migration workflow demo
+
+The repository can also demonstrate how Squad coordinates a modernization
+without asking one agent to rewrite the application:
+
+```text
+migration charter and rulebook
+  -> dependency-aware work item
+  -> bounded Migrator change
+  -> independent Reviewer challenge
+  -> mechanical characterization judge
+  -> gaps and repeated failures update the rules
+```
+
+Start with:
+
+```bash
+./scripts/validate-characterization.sh
+copilot --agent squad
+```
+
+Then ask:
+
+```text
+Team, prepare AtlasFX migration work item PILOT-002.
+
+Follow the migration charter and migration-batch skill. Do not implement the
+full modernization. Have Lead identify unresolved gaps, Migrator propose a
+disposable pilot only after those gaps are resolved, Reviewer challenge the
+proposal independently, and Scribe retain only approved decisions and reusable
+lessons. Cite rule IDs and validation evidence in every handoff.
+```
+
+The migration controls live under `docs/migration/`. The executable baseline
+judge lives in `scripts/validate-characterization.sh`.
 
 ## Optional: visualize the codebase with Graphify
 
